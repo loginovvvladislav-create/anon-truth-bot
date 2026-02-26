@@ -2,7 +2,7 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
 
-TOKEN = "ВСТАВЬ_СЮДА_ТОКЕН"
+TOKEN = "8793875356:AAHq6CqTB5TpBpR_dYWmlc8d86fHZP5vR_A"
 
 # временное хранилище (позже заменим на БД)
 answers = {}
