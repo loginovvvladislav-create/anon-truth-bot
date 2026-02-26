@@ -1,9 +1,8 @@
-# version 4 – Анонимная правда с анализом и рекламой
+# version 4 – Анонимная правда для bothost (без TextBlob)
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
-from textblob import TextBlob  # для простого анализа текста
 
-TOKEN = "8793875356:AAHq6CqTB5TpBpR_dYWmlc8d86fHZP5vR_A"
+TOKEN = "ВСТАВЬ_СЮДА_ТОКЕН"
 
 # временное хранилище (позже заменим на БД)
 answers = {}
@@ -12,15 +11,17 @@ answers = {}
 # функции
 # ----------------------
 
-def analyze_answers(user_answers):
-    """Простой анализ настроения ответов"""
-    polarity = sum(TextBlob(ans).sentiment.polarity for ans in user_answers) / len(user_answers)
-    if polarity > 0.1:
-        return "😄 В целом положительные отзывы"
-    elif polarity < -0.1:
-        return "😢 В целом критические отзывы"
+def analyze_answers_simple(user_answers):
+    """
+    Простой анализ:
+    - если больше половины сообщений длинные (>50 символов), считаем "детальные отзывы"
+    - иначе "короткие отзывы"
+    """
+    long_msgs = sum(1 for a in user_answers if len(a) > 50)
+    if long_msgs / len(user_answers) > 0.5:
+        return "📝 В основном детальные отзывы"
     else:
-        return "🤔 Смешанные мнения"
+        return "✏️ В основном короткие комментарии"
 
 def start(update, context):
     args = context.args
@@ -104,7 +105,7 @@ def answers_command(update, context):
         text += f"{i}. {ans}\n\n"
 
     # простой анализ
-    analysis = analyze_answers(user_answers)
+    analysis = analyze_answers_simple(user_answers)
     text += f"📊 Анализ: {analysis}\n\n"
 
     # рекламный блок
